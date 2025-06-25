@@ -1,72 +1,103 @@
+import os
 import requests
-from fpdf import FPDF
-import os, json
+import json
 from datetime import datetime
-import random
+import cloudinary
+from cloudinary.uploader import upload
 
-def get_quote():
-    try:
-        res = requests.get("https://api.quotable.io/random")
-        data = res.json()
-        return f'📜 "{data["content"]}" — {data["author"]}\n'
-    except:
-        return "Quote unavailable."
+# Load environment variables
+AI21_API_KEY = os.getenv("AI21_API_KEY")
+cloudinary.config(cloudinary_url=os.getenv("CLOUDINARY_URL"))
 
-def get_dad_joke():
-    try:
-        res = requests.get("https://icanhazdadjoke.com/", headers={"Accept": "application/json"})
-        data = res.json()
-        return f'😂 {data["joke"]}\n'
-    except:
-        return "Joke not found. Insert awkward silence."
+def generate_blog_text():
+    prompt = (
+        "Write a fun, weird, and useful tech blog post about the future of AI-powered websites. "
+        "Make it engaging, witty, and less than 600 words. Include a title at the top."
+    )
 
-def get_books_about(topic="success"):
-    try:
-        url = f"https://www.googleapis.com/books/v1/volumes?q={topic}"
-        res = requests.get(url)
-        books = res.json().get("items", [])
-        book_titles = [f"📚 {b['volumeInfo']['title']}" for b in books[:3]]
-        return "\n".join(book_titles)
-    except:
-        return "Books not found. Try using your imagination."
+    headers = {
+        "Authorization": f"Bearer {AI21_API_KEY}",
+        "Content-Type": "application/json"
+    }
 
-def get_bacon_paragraph():
-    try:
-        res = requests.get("https://baconipsum.com/api/?type=meat-and-filler&paras=1&format=text")
-        return f'\n🥓 {res.text.strip()}'
-    except:
-        return "Bacon Ipsum not sizzling today."
+    payload = {
+        "prompt": prompt,
+        "numResults": 1,
+        "maxTokens": 700,
+        "temperature": 0.8,
+        "topP": 1,
+        "topKReturn": 0,
+        "stopSequences": ["###"]
+    }
 
-def generate_ebook():
-    if not os.path.exists("ebooks"):
-        os.makedirs("ebooks")
+    response = requests.post(
+        "https://api.ai21.com/studio/v1/j1-large/complete",
+        headers=headers,
+        json=payload
+    )
 
-    title = f"AI_Ebook_{random.randint(1000,9999)}"
-    filename = f"{title}.pdf"
-    filepath = os.path.join("ebooks", filename)
+    result = response.json()
+    return result['completions'][0]['data']['text'].strip()
 
-    content = ""
-    content += f"{get_quote()}\n"
-    content += f"{get_dad_joke()}\n"
-    content += "Recommended Books:\n" + get_books_about("motivation") + "\n"
-    content += get_bacon_paragraph()
+def wrap_html(content):
+    return f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>My Auto-Blog</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; padding: 2em; line-height: 1.6; }}
+        h1 {{ color: #444; }}
+    </style>
+</head>
+<body>
+{content.replace('\n', '<br><br>')}
+</body>
+</html>"""
 
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    pdf.multi_cell(0, 10, txt=content)
-    pdf.output(filepath)
+def save_blog_html(content, filename):
+    folder = "blogs"
+    os.makedirs(folder, exist_ok=True)
+    full_path = os.path.join(folder, filename)
+    with open(full_path, "w", encoding="utf-8") as f:
+        f.write(content)
+    return full_path
 
-    # Store in ebooks.json
-    link = f"/ebooks/{filename}"
-    try:
-        with open("ebooks.json", "r") as f:
-            books = json.load(f)
-    except:
-        books = []
+def upload_to_cloudinary(path):
+    result = upload(path, resource_type="raw", folder="blogs/")
+    return result.get("secure_url")
 
-    books.insert(0, {"link": link, "timestamp": datetime.now().isoformat()})
-    with open("ebooks.json", "w") as f:
-        json.dump(books, f, indent=2)
+def generate_blog():
+    print("🧠 Generating blog post with AI21...")
+    raw_text = generate_blog_text()
+    html = wrap_html(raw_text)
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"blog_{timestamp}.html"
+    path = save_blog_html(html, filename)
+
+    print("☁️ Uploading to Cloudinary...")
+    link = upload_to_cloudinary(path)
+
+    print("✅ Blog uploaded:", link)
+
+    # Store in blogs.json
+    entry = {"title": raw_text.split('\n')[0], "link": link}
+    db_file = "blogs.json"
+
+    if os.path.exists(db_file):
+        with open(db_file, "r") as f:
+            data = json.load(f)
+    else:
+        data = []
+
+    data.insert(0, entry)
+
+    with open(db_file, "w") as f:
+        json.dump(data, f, indent=2)
 
     return link
+
+# For testing only
+if __name__ == "__main__":
+    generate_blog()
