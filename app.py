@@ -1,111 +1,48 @@
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
-from googleapiclient.http import MediaFileUpload
-from googleapiclient.errors import HttpError
-import mimetypes
-import pickle
+from flask import Flask, render_template, redirect, url_for
+import json
 import os
-import logging
+from ebook_generator import generate_ebook
+from blog_generator import generate_blog
+from site_generator import generate_site
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+app = Flask(__name__)
 
-SCOPES = ['https://www.googleapis.com/auth/drive.file']
-TOKEN_FILE = 'token.pickle'
-CREDENTIALS_FILE = 'credentials.json'
+def load_json(file):
+    if os.path.exists(file):
+        with open(file) as f:
+            return json.load(f)
+    return []
 
-def get_drive_service():
-    """Authenticate and return Google Drive service instance."""
-    creds = None
-    if os.path.exists(TOKEN_FILE):
-        try:
-            with open(TOKEN_FILE, 'rb') as token:
-                creds = pickle.load(token)
-        except (pickle.UnpicklingError, EOFError, FileNotFoundError) as e:
-            logger.warning(f"Token loading failed: {str(e)}")
-            os.remove(TOKEN_FILE)
+@app.route('/')
+def home():
+    return render_template("index.html")
 
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            try:
-                creds.refresh(Request())
-            except Exception as e:
-                logger.error(f"Token refresh failed: {str(e)}")
-                creds = None
-        else:
-            try:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    CREDENTIALS_FILE, SCOPES)
-                creds = flow.run_local_server(port=0)
-            except FileNotFoundError:
-                logger.error("Credentials file not found")
-                raise
+@app.route('/generate/ebook')
+def make_ebook():
+    generate_ebook()
+    return redirect(url_for('ebooks'))
 
-        with open(TOKEN_FILE, 'wb') as token:
-            pickle.dump(creds, token)
+@app.route('/generate/blog')
+def make_blog():
+    generate_blog()
+    return redirect(url_for('blogs'))
 
-    return build('drive', 'v3', credentials=creds)
+@app.route('/generate/site')
+def make_site():
+    generate_site()
+    return redirect(url_for('sites'))
 
-def upload_to_drive(file_path, folder_id=None):
-    """
-    Upload file to Google Drive and return shareable link.
-    
-    Args:
-        file_path: Path to file to upload
-        folder_id: Optional target folder ID
-    
-    Returns:
-        Shareable URL or None if failed
-    """
-    if not os.path.exists(file_path):
-        logger.error(f"File not found: {file_path}")
-        return None
+@app.route('/ebooks')
+def ebooks():
+    return render_template("ebooks.html", ebooks=load_json("ebooks.json"))
 
-    try:
-        service = get_drive_service()
-        file_name = os.path.basename(file_path)
-        
-        # Detect MIME type
-        mime_type, _ = mimetypes.guess_type(file_path)
-        if not mime_type:
-            mime_type = 'application/octet-stream'
-            logger.warning(f"Unknown file type, using {mime_type}")
+@app.route('/blogs')
+def blogs():
+    return render_template("blogs.html", blogs=load_json("blogs.json"))
 
-        # Prepare file metadata
-        file_metadata = {'name': file_name}
-        if folder_id:
-            file_metadata['parents'] = [folder_id]
+@app.route('/sites')
+def sites():
+    return render_template("sites.html", sites=load_json("sites.json"))
 
-        media = MediaFileUpload(file_path, mimetype=mime_type)
-        
-        # Execute upload
-        file = service.files().create(
-            body=file_metadata,
-            media_body=media,
-            fields='id'
-        ).execute()
-        file_id = file.get('id')
-        logger.info(f"Uploaded {file_name} with ID: {file_id}")
-
-        # Generate shareable link
-        return f"https://drive.google.com/file/d/{file_id}/view"
-    
-    except HttpError as e:
-        logger.error(f"Google API error: {str(e)}")
-    except Exception as e:
-        logger.error(f"Unexpected error: {str(e)}")
-    
-    return None
-
-# Example usage
 if __name__ == "__main__":
-    ebook_url = upload_to_drive(
-        file_path="/path/to/your/ebook.pdf",
-        folder_id="your-folder-id-here"  # Optional
-    )
-    if ebook_url:
-        print(f"eBook URL: {ebook_url}")
-    else:
-        print("Upload failed")
+    app.run(debug=True)
