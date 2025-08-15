@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlgoWhirl-Dashboard</title>
+    <link rel="icon" type="image/png" href="loco.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="dash.css">
+    <style>
+        /* Tab styling */
+        .tab-container {
+            margin: 20px 0;
+        }
+        .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            color: #2c3e50;
+            border-bottom: 3px solid #2c3e50;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px 0;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+    
+    <script>
+        // Function to set a cookie
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+
+        // Function to get a cookie
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        // Function to apply settings from cookies
+        function applyCookieSettings() {
+            // Apply theme (light-mode class)
+            const theme = getCookie('theme');
+            if (theme) {
+                document.documentElement.classList.toggle('light-mode', theme === 'light');
+            }
+
+            // Apply text size (CSS variable --font-size)
+            const textSize = getCookie('textSize');
+            if (textSize) {
+                document.documentElement.style.setProperty('--font-size', textSize);
+            }
+
+            // Apply font family (CSS variable --font-family)
+            const fontFamily = getCookie('fontFamily');
+            if (fontFamily) {
+                document.documentElement.style.setProperty('--font-family', fontFamily);
+            }
+
+            // Apply username
+            const username = getCookie('username');
+            if (username) {
+                const userEmailElement = document.getElementById('user-email');
+                if (userEmailElement) {
+                    userEmailElement.textContent = username;
+                }
+                
+                const avatarElement = document.getElementById('avatar');
+                if (avatarElement) {
+                    avatarElement.textContent = username.charAt(0).toUpperCase();
+                }
+            }
+        }
+
+        // Tab functionality
+        function setupTabs() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all buttons and contents
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked button and corresponding content
+                    btn.classList.add('active');
+                    const tabId = btn.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Activate the first tab by default
+            if (tabBtns.length > 0) {
+                tabBtns[0].click();
+            }
+        }
+
+        // Call the function immediately to apply settings before rendering
+        document.addEventListener('DOMContentLoaded', function() {
+            applyCookieSettings();
+            setupTabs();
+        });
+    </script>
+</head>
+<body>
+    <!-- Blocked Account Overlay -->
+    <div id="blocked-container">
+        <div id="blocked-message">
+            <h2><i class="fas fa-ban"></i> Account Flagged</h2>
+            <p>Your account has been flagged for violating our terms of service.</p>
+            <p>All access to AlgoWhirl has been restricted.</p>
+            <a id="help-link" href="help.html">
+                <i class="fas fa-question-circle"></i> Get Help
+            </a>
+        </div>
+    </div>
+    
+    <!-- Status Message -->
+    <div id="status-message"></div>
+    
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo-container">
+                <div class="logo-img">A</div>
+                <div class="logo-text">AlgoWhirl</div>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="user-menu" id="user-menu">
+                <div class="user-info" id="user-info">
+                    <div class="avatar" id="avatar">U</div>
+                    <span id="user-email">User</span>
+                    <div class="dropdown-menu" id="dropdown-menu">
+                        <ul>
+                            <li><a href="help.html"><i class="fas fa-question-circle"></i> Help</a></li>
+                            <li class="settings"><a href="settings" id="setting-link"><i class="fas fa-cog"></i> Settings</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container main-content">
+        <!-- Content Section -->
+        <div class="section">
+            <div class="section-header">
+              <h2 class="section-title"><i class="fas fa-th-large"></i> Content Hub</h2>
+            </div>
+            
+            <!-- Tab System -->
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="blogs-tab">Blogs</button>
+                    <button class="tab-btn" data-tab="diy-tab">DIY</button>
+                    <button class="tab-btn" data-tab="ebook-tab">Read Ebook</button>
+                </div>
+                
+                <!-- Blogs Tab Content -->
+                <div id="blogs-tab" class="tab-content active">
+                    <div class="content-grid">
+                        <!-- Blog Cards -->
+                        <a href="https://example.com/blog1" class="card-link">
+                            <div class="card">
+                                <div class="card-img">
+                                    <i class="fas fa-newspaper"></i>
+                                </div>
+                                <div class="card-content">
+                                    <span class="tag tag-blog">Blog</span>
+                                    <h3>Getting Started with Web Development</h3>
+                                    <p>Learn the fundamentals of HTML, CSS, and JavaScript to start your web development journey.</p>
+                                    <div class="card-footer">
+                                        <div class="date">July 15, 2025</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        
+                        <a href="https://example.com/blog2" class="card-link">
+                            <div class="card">
+                                <div class="card-img">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="card-content">
+                                    <span class="tag tag-blog">Blog</span>
+                                    <h3>Data Science Trends in 2025</h3>
+                                    <p>Explore the latest trends and technologies shaping the data science landscape this year.</p>
+                                    <div class="card-footer">
+                                        <div class="date">July 22, 2025</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- DIY Tab Content -->
+                <div id="diy-tab" class="tab-content">
+                    <div class="content-grid">
+                        <!-- DIY Cards -->
+                        <a href="https://example.com/raspberry-pi-project" class="card-link">
+                            <div class="card">
+                                <div class="card-img">
+                                    <i class="fas fa-tools"></i>
+                                </div>
+                                <div class="card-content">
+                                    <span class="tag tag-diy">DIY</span>
+                                    <h3>Raspberry Pi Home Server</h3>
+                                    <p>Build your own home server with Raspberry Pi for media streaming and file sharing.</p>
+                                    <div class="card-footer">
+                                        <div class="date">April 28, 2025</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        
+                        <a href="https://example.com/smart-home-diy" class="card-link">
+                            <div class="card">
+                                <div class="card-img">
+                                    <i class="fas fa-home"></i>
+                                </div>
+                                <div class="card-content">
+                                    <span class="tag tag-diy">DIY</span>
+                                    <h3>Smart Home Automation</h3>
+                                    <p>Turn your regular home into a smart home with these affordable DIY solutions.</p>
+                                    <div class="card-footer">
+                                        <div class="date">May 10, 2025</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        
+                        <a href="https://example.com/arduino-weather-station" class="card-link">
+                            <div class="card">
+                                <div class="card-img">
+                                    <i class="fas fa-cloud-sun"></i>
+                                </div>
+                                <div class="card-content">
+                                    <span class="tag tag-diy">DIY</span>
+                                    <h3>Arduino Weather Station</h3>
+                                    <p>Build your own weather monitoring system using Arduino and simple sensors.</p>
+                                    <div class="card-footer">
+                                        <div class="date">June 5, 2025</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        
+                        <a href="https://example.com/diy-3d-printer" class="card-link">
+                            <div class="card">
+                                <div class="card-img">
+                                    <i class="fas fa-print"></i>
+                                </div>
+                                <div class="card-content">
+                                    <span class="tag tag-diy">DIY</span>
+                                    <h3>DIY 3D Printer Kit</h3>
+                                    <p>Assemble your own 3D printer from a kit and start creating custom designs.</p>
+                                    <div class="card-footer">
+                                        <div class="date">June 15, 2025</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Ebook Tab Content -->
+                <div id="ebook-tab" class="tab-content">
+                    <div class="content-grid">
+                        <!-- Ebook Cards -->
+                        <a href="https://example.com/ebook1" class="card-link">
+                            <div class="card">
+                                <div class="card-img">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="card-content">
+                                    <span class="tag tag-ebook">Ebook</span>
+                                    <h3>JavaScript: The Complete Guide</h3>
+                                    <p>Master JavaScript from basics to advanced concepts with this comprehensive guide.</p>
+                                    <div class="card-footer">
+                                        <div class="date">March 10, 2025</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        
+                        <a href="https://example.com/ebook2" class="card-link">
+                            <div class="card">
+                                <div class="card-img">
+                                    <i class="fas fa-book-open"></i>
+                                </div>
+                                <div class="card-content">
+                                    <span class="tag tag-ebook">Ebook</span>
+                                    <h3>Python for Data Analysis</h3>
+                                    <p>Learn how to use Python for data analysis, visualization, and machine learning.</p>
+                                    <div class="card-footer">
+                                        <div class="date">April 5, 2025</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="view-more">
+                <button class="view-more-btn" id="view-more-btn">View More Content</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-content">
+        <div class="container">
+            <div class="footer-logo">AlgoWhirl</div>
+            <p class="copyright">© 2025 AlgoWhirl. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="dash.js"></script>
+</body>
+</html>
