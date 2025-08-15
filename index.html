@@ -3,352 +3,895 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AlgoWhirl-Dashboard</title>
-    <link rel="icon" type="image/png" href="loco.png">
+    <title>AlgoWhirl | Personalized Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="dash.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Tab styling */
-        .tab-container {
-            margin: 20px 0;
+        :root {
+            --primary: #00B2FF;
+            --secondary: #FF3C38;
+            --dark: #0E0E0E;
+            --darker: #0A0A0A;
+            --light: #F0F0F0;
+            --medium: #1A1A1A;
+            --accent: #9c27b0;
+            --success: #4CAF50;
         }
-        .tab-buttons {
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 178, 255, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 60, 56, 0.1) 0%, transparent 20%);
+            padding-bottom: 30px;
+        }
+        
+        /* Header Styles */
+        .header {
+            background-color: var(--darker);
+            padding: 15px 5%;
             display: flex;
-            border-bottom: 1px solid #ddd;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        .tab-btn {
-            padding: 10px 20px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            color: #666;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        .tab-btn.active {
-            color: #2c3e50;
-            border-bottom: 3px solid #2c3e50;
+        
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: bold;
+            font-size: 18px;
         }
-        .tab-content {
+        
+        .logo-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .user-block {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(0, 178, 255, 0.5);
+        }
+        
+        /* Floating Menu */
+        .floating-menu {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background-color: var(--medium);
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            width: 220px;
+            overflow: hidden;
             display: none;
-            padding: 20px 0;
+            z-index: 200;
+            border: 1px solid #333;
+            transform-origin: top right;
+            animation: scaleIn 0.2s ease-out forwards;
         }
-        .tab-content.active {
-            display: block;
+        
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .menu-item {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #333;
+        }
+        
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+        
+        .menu-item.sign-out {
+            color: var(--secondary);
+        }
+        
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Content Sections */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        .welcome-section {
+            background: var(--medium);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid #333;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .welcome-section h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .welcome-section p {
+            color: #aaa;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+        
+        .niche-badge {
+            display: inline-block;
+            background: rgba(0, 178, 255, 0.15);
+            color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.85rem;
+            border: 1px solid rgba(0, 178, 255, 0.3);
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .content-section {
+            background: var(--medium);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #333;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .section-header i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        
+        .content-cards {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 18px;
+            transition: all 0.3s ease;
+            border: 1px solid #333;
+            cursor: pointer;
+        }
+        
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 178, 255, 0.5);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .card-category {
+            background: var(--accent);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        
+        .card-date {
+            color: #888;
+            font-size: 0.85rem;
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+        
+        .card-desc {
+            color: #aaa;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .card-tag {
+            background: rgba(255, 60, 56, 0.15);
+            color: var(--secondary);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(255, 60, 56, 0.3);
+        }
+        
+        .no-content {
+            text-align: center;
+            padding: 20px;
+            color: #888;
+            font-style: italic;
+        }
+        
+        /* Status Message */
+        .status-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: 500;
+            z-index: 1000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        .status-message.success {
+            background-color: rgba(76, 175, 80, 0.9);
+            color: white;
+        }
+        
+        .status-message.error {
+            background-color: rgba(244, 67, 54, 0.9);
+            color: white;
+        }
+        
+        /* Loading States */
+        .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 0.9rem;
+            margin-top: 30px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .welcome-section {
+                padding: 20px;
+            }
+            
+            .content-section {
+                padding: 20px;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo-text {
+                font-size: 1.2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo-text {
+                display: none;
+            }
+            
+            .welcome-section h1 {
+                font-size: 1.8rem;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+            
+            .floating-menu {
+                width: 180px;
+            }
         }
     </style>
-    
-    <script>
-        // Function to set a cookie
-        function setCookie(name, value, days) {
-            let expires = "";
-            if (days) {
-                const date = new Date();
-                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-                expires = "; expires=" + date.toUTCString();
-            }
-            document.cookie = name + "=" + (value || "") + expires + "; path=/";
-        }
-
-        // Function to get a cookie
-        function getCookie(name) {
-            const nameEQ = name + "=";
-            const ca = document.cookie.split(';');
-            for (let i = 0; i < ca.length; i++) {
-                let c = ca[i];
-                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-            }
-            return null;
-        }
-
-        // Function to apply settings from cookies
-        function applyCookieSettings() {
-            // Apply theme (light-mode class)
-            const theme = getCookie('theme');
-            if (theme) {
-                document.documentElement.classList.toggle('light-mode', theme === 'light');
-            }
-
-            // Apply text size (CSS variable --font-size)
-            const textSize = getCookie('textSize');
-            if (textSize) {
-                document.documentElement.style.setProperty('--font-size', textSize);
-            }
-
-            // Apply font family (CSS variable --font-family)
-            const fontFamily = getCookie('fontFamily');
-            if (fontFamily) {
-                document.documentElement.style.setProperty('--font-family', fontFamily);
-            }
-
-            // Apply username
-            const username = getCookie('username');
-            if (username) {
-                const userEmailElement = document.getElementById('user-email');
-                if (userEmailElement) {
-                    userEmailElement.textContent = username;
-                }
-                
-                const avatarElement = document.getElementById('avatar');
-                if (avatarElement) {
-                    avatarElement.textContent = username.charAt(0).toUpperCase();
-                }
-            }
-        }
-
-        // Tab functionality
-        function setupTabs() {
-            const tabBtns = document.querySelectorAll('.tab-btn');
-            const tabContents = document.querySelectorAll('.tab-content');
-            
-            tabBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    // Remove active class from all buttons and contents
-                    tabBtns.forEach(b => b.classList.remove('active'));
-                    tabContents.forEach(c => c.classList.remove('active'));
-                    
-                    // Add active class to clicked button and corresponding content
-                    btn.classList.add('active');
-                    const tabId = btn.getAttribute('data-tab');
-                    document.getElementById(tabId).classList.add('active');
-                });
-            });
-            
-            // Activate the first tab by default
-            if (tabBtns.length > 0) {
-                tabBtns[0].click();
-            }
-        }
-
-        // Call the function immediately to apply settings before rendering
-        document.addEventListener('DOMContentLoaded', function() {
-            applyCookieSettings();
-            setupTabs();
-        });
-    </script>
 </head>
 <body>
-    <!-- Blocked Account Overlay -->
-    <div id="blocked-container">
-        <div id="blocked-message">
-            <h2><i class="fas fa-ban"></i> Account Flagged</h2>
-            <p>Your account has been flagged for violating our terms of service.</p>
-            <p>All access to AlgoWhirl has been restricted.</p>
-            <a id="help-link" href="help.html">
-                <i class="fas fa-question-circle"></i> Get Help
-            </a>
+    <!-- Status Message Container -->
+    <div class="status-message" id="status-message"></div>
+    
+    <!-- Header with Logo and User Block -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-img">AW</div>
+            <div class="logo-text">AlgoWhirl</div>
+        </div>
+        
+        <div class="user-block" id="user-block">
+            <div class="avatar" id="user-avatar">
+                <div class="loading-spinner" id="avatar-loading"></div>
+            </div>
+            <div class="floating-menu" id="floating-menu">
+                <div class="menu-item" id="settings-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+                <div class="menu-item" id="help-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Help Center</span>
+                </div>
+                <div class="menu-item" id="personalization-item">
+                    <i class="fas fa-palette"></i>
+                    <span>Personalization</span>
+                </div>
+                <div class="menu-item sign-out" id="sign-out-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sign Out</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <h1>Welcome to Your Personalized Dashboard</h1>
+            <p>Showing content tailored to your interests:</p>
+            <div id="preferences-container">
+                <!-- Niches will be populated here -->
+            </div>
+        </section>
+        
+        <!-- Content Sections Grid -->
+        <div class="content-grid">
+            <!-- Blogs Section -->
+            <section class="content-section">
+                <div class="section-header">
+                    <i class="fas fa-blog"></i>
+                    <h2 class="section-title">Blogs & Articles</h2>
+                </div>
+                <div class="content-cards" id="blogs-container">
+                    <div class="loading-container">
+                        <div class="loading-spinner"></div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- DIY Section -->
+            <section class="content-section">
+                <div class="section-header">
+                    <i class="fas fa-tools"></i>
+                    <h2 class="section-title">DIY Projects</h2>
+                </div>
+                <div class="content-cards" id="diy-container">
+                    <div class="loading-container">
+                        <div class="loading-spinner"></div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Books Section -->
+            <section class="content-section">
+                <div class="section-header">
+                    <i class="fas fa-book"></i>
+                    <h2 class="section-title">Recommended Books</h2>
+                </div>
+                <div class="content-cards" id="books-container">
+                    <div class="loading-container">
+                        <div class="loading-spinner"></div>
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
     
-    <!-- Status Message -->
-    <div id="status-message"></div>
-    
-    <!-- Navigation -->
-    <nav>
-        <div class="container">
-            <div class="logo-container">
-                <div class="logo-img">A</div>
-                <div class="logo-text">AlgoWhirl</div>
-            </div>
-            
-            <button class="mobile-menu-btn" id="mobile-menu-btn">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-            <div class="user-menu" id="user-menu">
-                <div class="user-info" id="user-info">
-                    <div class="avatar" id="avatar">U</div>
-                    <span id="user-email">User</span>
-                    <div class="dropdown-menu" id="dropdown-menu">
-                        <ul>
-                            <li><a href="help.html"><i class="fas fa-question-circle"></i> Help</a></li>
-                            <li class="settings"><a href="settings" id="setting-link"><i class="fas fa-cog"></i> Settings</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container main-content">
-        <!-- Content Section -->
-        <div class="section">
-            <div class="section-header">
-              <h2 class="section-title"><i class="fas fa-th-large"></i> Content Hub</h2>
-            </div>
-            
-            <!-- Tab System -->
-            <div class="tab-container">
-                <div class="tab-buttons">
-                    <button class="tab-btn active" data-tab="blogs-tab">Blogs</button>
-                    <button class="tab-btn" data-tab="diy-tab">DIY</button>
-                    <button class="tab-btn" data-tab="ebook-tab">Read Ebook</button>
-                </div>
-                
-                <!-- Blogs Tab Content -->
-                <div id="blogs-tab" class="tab-content active">
-                    <div class="content-grid">
-                        <!-- Blog Cards -->
-                        <a href="https://example.com/blog1" class="card-link">
-                            <div class="card">
-                                <div class="card-img">
-                                    <i class="fas fa-newspaper"></i>
-                                </div>
-                                <div class="card-content">
-                                    <span class="tag tag-blog">Blog</span>
-                                    <h3>Getting Started with Web Development</h3>
-                                    <p>Learn the fundamentals of HTML, CSS, and JavaScript to start your web development journey.</p>
-                                    <div class="card-footer">
-                                        <div class="date">July 15, 2025</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        
-                        <a href="https://example.com/blog2" class="card-link">
-                            <div class="card">
-                                <div class="card-img">
-                                    <i class="fas fa-chart-line"></i>
-                                </div>
-                                <div class="card-content">
-                                    <span class="tag tag-blog">Blog</span>
-                                    <h3>Data Science Trends in 2025</h3>
-                                    <p>Explore the latest trends and technologies shaping the data science landscape this year.</p>
-                                    <div class="card-footer">
-                                        <div class="date">July 22, 2025</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- DIY Tab Content -->
-                <div id="diy-tab" class="tab-content">
-                    <div class="content-grid">
-                        <!-- DIY Cards -->
-                        <a href="https://example.com/raspberry-pi-project" class="card-link">
-                            <div class="card">
-                                <div class="card-img">
-                                    <i class="fas fa-tools"></i>
-                                </div>
-                                <div class="card-content">
-                                    <span class="tag tag-diy">DIY</span>
-                                    <h3>Raspberry Pi Home Server</h3>
-                                    <p>Build your own home server with Raspberry Pi for media streaming and file sharing.</p>
-                                    <div class="card-footer">
-                                        <div class="date">April 28, 2025</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        
-                        <a href="https://example.com/smart-home-diy" class="card-link">
-                            <div class="card">
-                                <div class="card-img">
-                                    <i class="fas fa-home"></i>
-                                </div>
-                                <div class="card-content">
-                                    <span class="tag tag-diy">DIY</span>
-                                    <h3>Smart Home Automation</h3>
-                                    <p>Turn your regular home into a smart home with these affordable DIY solutions.</p>
-                                    <div class="card-footer">
-                                        <div class="date">May 10, 2025</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        
-                        <a href="https://example.com/arduino-weather-station" class="card-link">
-                            <div class="card">
-                                <div class="card-img">
-                                    <i class="fas fa-cloud-sun"></i>
-                                </div>
-                                <div class="card-content">
-                                    <span class="tag tag-diy">DIY</span>
-                                    <h3>Arduino Weather Station</h3>
-                                    <p>Build your own weather monitoring system using Arduino and simple sensors.</p>
-                                    <div class="card-footer">
-                                        <div class="date">June 5, 2025</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        
-                        <a href="https://example.com/diy-3d-printer" class="card-link">
-                            <div class="card">
-                                <div class="card-img">
-                                    <i class="fas fa-print"></i>
-                                </div>
-                                <div class="card-content">
-                                    <span class="tag tag-diy">DIY</span>
-                                    <h3>DIY 3D Printer Kit</h3>
-                                    <p>Assemble your own 3D printer from a kit and start creating custom designs.</p>
-                                    <div class="card-footer">
-                                        <div class="date">June 15, 2025</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Ebook Tab Content -->
-                <div id="ebook-tab" class="tab-content">
-                    <div class="content-grid">
-                        <!-- Ebook Cards -->
-                        <a href="https://example.com/ebook1" class="card-link">
-                            <div class="card">
-                                <div class="card-img">
-                                    <i class="fas fa-book"></i>
-                                </div>
-                                <div class="card-content">
-                                    <span class="tag tag-ebook">Ebook</span>
-                                    <h3>JavaScript: The Complete Guide</h3>
-                                    <p>Master JavaScript from basics to advanced concepts with this comprehensive guide.</p>
-                                    <div class="card-footer">
-                                        <div class="date">March 10, 2025</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        
-                        <a href="https://example.com/ebook2" class="card-link">
-                            <div class="card">
-                                <div class="card-img">
-                                    <i class="fas fa-book-open"></i>
-                                </div>
-                                <div class="card-content">
-                                    <span class="tag tag-ebook">Ebook</span>
-                                    <h3>Python for Data Analysis</h3>
-                                    <p>Learn how to use Python for data analysis, visualization, and machine learning.</p>
-                                    <div class="card-footer">
-                                        <div class="date">April 5, 2025</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="view-more">
-                <button class="view-more-btn" id="view-more-btn">View More Content</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Footer -->
-    <footer class="main-content">
-        <div class="container">
-            <div class="footer-logo">AlgoWhirl</div>
-            <p class="copyright">© 2025 AlgoWhirl. All rights reserved.</p>
-        </div>
+    <footer class="footer">
+        <p>&copy; 2023 AlgoWhirl. All rights reserved.</p>
     </footer>
 
-    <script src="dash.js"></script>
+    <!-- Import Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { 
+            getAuth, 
+            signOut,
+            onAuthStateChanged,
+            isSignInWithEmailLink, 
+            signInWithEmailLink    
+        } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-analytics.js";
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAGoOUTVVcCqGh6_gdWQ5GhLZ68K8FgUNg",
+            authDomain: "algowhirl.firebaseapp.com",
+            projectId: "algowhirl",
+            storageBucket: "algowhirl.firebasestorage.app",
+            messagingSenderId: "653277054408",
+            appId: "1:653277054408:web:c809f923a93b7ab4e5acfd",
+            measurementId: "G-DVYZBSRXKT"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        
+        // DOM Cache
+        const dom = {
+            userBlock: document.getElementById('user-block'),
+            floatingMenu: document.getElementById('floating-menu'),
+            userAvatar: document.getElementById('user-avatar'),
+            avatarLoading: document.getElementById('avatar-loading'),
+            preferencesContainer: document.getElementById('preferences-container'),
+            blogsContainer: document.getElementById('blogs-container'),
+            diyContainer: document.getElementById('diy-container'),
+            booksContainer: document.getElementById('books-container'),
+            signOutItem: document.getElementById('sign-out-item'),
+            statusMessage: document.getElementById('status-message'),
+            personalizationItem: document.getElementById('personalization-item')
+        };
+        
+        // User preferences from localStorage
+        let userPreferences = {
+            niches: ['Tech', 'Gaming', 'Home Automation', 'Cameras'],
+            contentTypes: ['blogs', 'diy', 'books']
+        };
+        
+        // Content data cache
+        let contentData = {
+            blogs: [],
+            diy: [],
+            books: []
+        };
+        
+        // Show status message
+        function showMessage(message, type) {
+            dom.statusMessage.textContent = message;
+            dom.statusMessage.className = `status-message ${type}`;
+            dom.statusMessage.style.display = 'block';
+            
+            requestAnimationFrame(() => {
+                dom.statusMessage.style.opacity = '1';
+            });
+            
+            setTimeout(() => {
+                requestAnimationFrame(() => {
+                    dom.statusMessage.style.opacity = '0';
+                    setTimeout(() => {
+                        dom.statusMessage.style.display = 'none';
+                    }, 300);
+                });
+            }, 3000);
+        }
+        
+        // Fetch JSON data with error handling and caching
+        async function fetchJSONData(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch ${url}: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error(`Error loading ${url}:`, error);
+                showMessage(`Couldn't load ${url.split('/').pop()}`, 'error');
+                return [];
+            }
+        }
+        
+        // Load all content from JSON files
+        async function loadContentData() {
+            try {
+                const [blogs, diy, books] = await Promise.all([
+                    fetchJSONData('blogs.json'),
+                    fetchJSONData('DIY.json'),
+                    fetchJSONData('books.json')
+                ]);
+                
+                contentData = {
+                    blogs: blogs || [],
+                    diy: diy || [],
+                    books: books || []
+                };
+                
+                return contentData;
+            } catch (error) {
+                console.error('Error loading content data:', error);
+                showMessage('Error loading content. Please try again later.', 'error');
+                return { blogs: [], diy: [], books: [] };
+            }
+        }
+        
+        // Initialize the dashboard
+        async function initDashboard(user) {
+            // Load preferences from localStorage if available
+            const savedPrefs = localStorage.getItem('userPreferences');
+            if (savedPrefs) {
+                userPreferences = JSON.parse(savedPrefs);
+            }
+            
+            // Set user avatar
+            dom.avatarLoading.style.display = 'none';
+            dom.userAvatar.textContent = user.email.charAt(0).toUpperCase();
+            localStorage.setItem('userEmail', user.email);
+            
+            // Render user preferences
+            renderPreferences();
+            
+            // Load and render content
+            await loadContentData();
+            renderContent();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Show welcome message
+            const username = user.email.split('@')[0];
+            showMessage(`Welcome back, ${username}! Content personalized to your interests.`, 'success');
+        }
+        
+        // Render user preferences
+        function renderPreferences() {
+            dom.preferencesContainer.innerHTML = '';
+            userPreferences.niches.forEach(niche => {
+                const badge = document.createElement('span');
+                badge.className = 'niche-badge';
+                badge.textContent = niche;
+                badge.title = niche;
+                dom.preferencesContainer.appendChild(badge);
+            });
+        }
+        
+        // Render content sections
+        function renderContent() {
+            // Filter content based on user preferences
+            const filteredBlogs = filterContent(contentData.blogs);
+            const filteredDIY = filterContent(contentData.diy);
+            const filteredBooks = filterContent(contentData.books);
+            
+            // Render each section
+            renderContentSection(filteredBlogs, dom.blogsContainer);
+            renderContentSection(filteredDIY, dom.diyContainer);
+            renderContentSection(filteredBooks, dom.booksContainer);
+        }
+        
+        // Filter content based on user preferences
+        function filterContent(items) {
+            if (!items || !items.length) return [];
+            
+            return items.filter(item => {
+                // If no preferences set, show all content
+                if (!userPreferences.niches.length) return true;
+                
+                // Check if item matches any of the user's preferred niches
+                return userPreferences.niches.some(niche => {
+                    // Check category (if exists)
+                    if (item.category && item.category.includes(niche)) return true;
+                    
+                    // Check tags (if exists)
+                    if (item.tags && item.tags.some(tag => tag.includes(niche))) return true;
+                    
+                    // Check title and description as fallback
+                    if (item.title && item.title.includes(niche)) return true;
+                    if (item.description && item.description.includes(niche)) return true;
+                    
+                    return false;
+                });
+            });
+        }
+        
+        // Render content cards for a section
+        function renderContentSection(items, container) {
+            container.innerHTML = '';
+            
+            if (!items || items.length === 0) {
+                container.innerHTML = '<div class="no-content">No content matching your preferences found.</div>';
+                return;
+            }
+            
+            const fragment = document.createDocumentFragment();
+            
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                // Format date if it exists
+                let displayDate = '';
+                if (item.date) {
+                    const dateObj = new Date(item.date);
+                    if (!isNaN(dateObj)) {
+                        displayDate = dateObj.toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'short', 
+                            day: 'numeric' 
+                        });
+                    } else {
+                        displayDate = item.date;
+                    }
+                }
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <span class="card-category">${item.category || 'General'}</span>
+                        ${displayDate ? `<span class="card-date">${displayDate}</span>` : ''}
+                    </div>
+                    <h3 class="card-title">${item.title || 'Untitled'}</h3>
+                    <p class="card-desc">${item.description || 'No description available.'}</p>
+                    ${item.tags && item.tags.length ? `
+                    <div class="card-tags">
+                        ${item.tags.map(tag => `<span class="card-tag">${tag}</span>`).join('')}
+                    </div>
+                    ` : ''}
+                `;
+                
+                // Add click handler if URL exists
+                if (item.url) {
+                    card.addEventListener('click', () => {
+                        window.open(item.url, '_blank');
+                    });
+                }
+                
+                fragment.appendChild(card);
+            });
+            
+            container.appendChild(fragment);
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            // Toggle floating menu
+            dom.userBlock.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dom.floatingMenu.style.display = dom.floatingMenu.style.display === 'block' ? 'none' : 'block';
+            });
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!dom.userBlock.contains(e.target)) {
+                    dom.floatingMenu.style.display = 'none';
+                }
+            });
+            
+            // Sign out functionality
+            dom.signOutItem.addEventListener('click', async () => {
+                try {
+                    await signOut(auth);
+                    showMessage("Signed out successfully. Redirecting to login...", 'success');
+                    setTimeout(() => {
+                        window.location.href = 'sign-in.html';
+                    }, 1500);
+                } catch (error) {
+                    showMessage(`Sign out failed: ${error.message}`, 'error');
+                }
+            });
+            
+            // Personalization
+            dom.personalizationItem.addEventListener('click', () => {
+                openPersonalizationModal();
+            });
+        }
+        
+        // Open personalization modal
+        function openPersonalizationModal() {
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0,0,0,0.7)';
+            modal.style.display = 'flex';
+            modal.style.justifyContent = 'center';
+            modal.style.alignItems = 'center';
+            modal.style.zIndex = '1000';
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.backgroundColor = '#1A1A1A';
+            modalContent.style.padding = '30px';
+            modalContent.style.borderRadius = '15px';
+            modalContent.style.width = '90%';
+            modalContent.style.maxWidth = '500px';
+            modalContent.style.border = '1px solid #333';
+            
+            modalContent.innerHTML = `
+                <h2 style="margin-bottom: 20px; color: var(--primary);">Personalize Your Content</h2>
+                <p style="margin-bottom: 20px; color: #aaa;">Select your interests to customize your dashboard:</p>
+                
+                <div style="margin-bottom: 25px;">
+                    <h3 style="margin-bottom: 15px; color: var(--secondary);">Preferred Niches</h3>
+                    <div id="niche-selection" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px;">
+                        ${['Tech', 'Gaming', 'Esports', 'Motorsports', 'Biking', 'Home Automation', 'Smart Living', 'Cameras']
+                          .map(niche => `
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" name="niche" value="${niche}" 
+                                    ${userPreferences.niches.includes(niche) ? 'checked' : ''}
+                                    style="margin-right: 8px;">
+                                ${niche}
+                            </label>
+                          `).join('')}
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button id="cancel-prefs" style="background: #333; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancel</button>
+                    <button id="save-prefs" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Save Preferences</button>
+                </div>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            
+            // Save preferences
+            document.getElementById('save-prefs').addEventListener('click', () => {
+                const selectedNiches = Array.from(document.querySelectorAll('input[name="niche"]:checked'))
+                    .map(checkbox => checkbox.value);
+                
+                userPreferences.niches = selectedNiches;
+                localStorage.setItem('userPreferences', JSON.stringify(userPreferences));
+                
+                // Update UI
+                renderPreferences();
+                renderContent();
+                
+                showMessage("Preferences updated successfully!", 'success');
+                document.body.removeChild(modal);
+            });
+            
+            // Close modal
+            document.getElementById('cancel-prefs').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            // Close when clicking outside modal
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            });
+        }
+        
+        // Handle authentication state
+        function checkAuthState() {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    initDashboard(user);
+                } else {
+                    showMessage("You need to sign in to access the dashboard. Redirecting...", 'error');
+                    setTimeout(() => {
+                        window.location.href = 'sign-in.html';
+                    }, 2000);
+                }
+            });
+        }
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Handle incoming email link
+            if (isSignInWithEmailLink(auth, window.location.href)) {
+                let email = window.localStorage.getItem('emailForSignIn');
+                
+                if (!email) {
+                    email = prompt('Please provide your email address for confirmation:');
+                }
+                
+                if (email) {
+                    signInWithEmailLink(auth, email, window.location.href)
+                        .then(() => {
+                            window.localStorage.removeItem('emailForSignIn');
+                            window.history.replaceState({}, document.title, window.location.pathname);
+                        })
+                        .catch((error) => {
+                            console.error("Error signing in with email link:", error);
+                            showMessage(`Sign-in failed: ${error.message}`, 'error');
+                        });
+                }
+            } else {
+                checkAuthState();
+            }
+        });
+    </script>
 </body>
 </html>
