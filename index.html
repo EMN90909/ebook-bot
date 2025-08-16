@@ -393,9 +393,9 @@ async function fetchJSONData(url) {
 async function loadContentData() {
     try {
         const [blogs, diy, books] = await Promise.all([
-            fetchJSONData('blogs.json'),
-            fetchJSONData('diy.json'),
-            fetchJSONData('books.json')
+            fetchJSONData('items/blogs.json'),
+            fetchJSONData('items/diy.json'),
+            fetchJSONData('items/books.json')
         ]);
         
         contentData = {
