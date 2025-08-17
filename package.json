@@ -7,8 +7,7 @@
     "react-dom": "^18.3.1",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4",
-    "quill": "^2.0.2",
-    "react-quill": "^2.0.0"
+    "lucide-react": "^0.411.0"
   },
   "scripts": {
     "start": "react-scripts start",
