@@ -1,6 +1,76 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
-  Heading1, Text, Image, PanelTop, PanelBottom, Trash2, Edit2, PlusCircle,
+  Heading1, Text, Image, PanelTop, PanelBconst sampleData = {
+    blogs: [
+        {
+            "picture": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+            "title": "The Future of AI in Web Development",
+            "description": "Exploring how artificial intelligence is transforming the way we build and interact with websites.",
+            "category": "Tech",
+            "date": "2023-08-10",
+            "tags": ["AI", "Web Development", "Future Tech"],
+            "url": "https://example.com/ai-web-dev",
+            "mode": "no sign in required"
+        },
+        {
+            "picture": "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+            "title": "Advanced CSS Techniques for 2023",
+            "description": "Learn cutting-edge CSS techniques to create stunning, responsive designs with minimal code.",
+            "category": "Web",
+            "date": "2023-07-22",
+            "tags": ["CSS", "Frontend", "Design"],
+            "url": "https://example.com/css-techniques",
+            "mode": "sign in required"
+        }
+    ],
+    diy: [
+        {
+            "picture": "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+            "title": "Build Your Own Home Server with Raspberry Pi",
+            "description": "Step-by-step guide to creating a powerful home server for media streaming and file sharing.",
+            "category": "Electronics",
+            "date": "2023-08-05",
+            "tags": ["Raspberry Pi", "DIY", "Home Server"],
+            "url": "https://example.com/raspberry-pi-server",
+            "mode": "no sign in required"
+        },
+        {
+            "picture": "https://images.unsplash.com/photo-1593118247619-e2d6f056869e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+            "title": "Smart Home Automation System",
+            "description": "Transform your home with this DIY smart automation system using affordable components.",
+            "category": "Electronics",
+            "date": "2023-07-30",
+            "tags": ["Smart Home", "DIY", "Automation"],
+            "url": "https://example.com/smart-home-diy",
+            "mode": "sign in required"
+        }
+    ],
+    books: [
+        {
+            "picture": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+            "title": "JavaScript: The Definitive Guide",
+            "description": "Comprehensive guide to mastering JavaScript from fundamentals to advanced concepts.",
+            "category": "Programming",
+            "date": "2023-06-15",
+            "tags": ["JavaScript", "Programming", "Web"],
+            "url": "https://example.com/js-guide",
+            "mode": "no sign in required"
+        },
+        {
+            "picture": "https://images.unsplash.com/photo-1495640388908-05fa85288e61?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+            "title": "Python for Data Science",
+            "description": "Learn how to use Python for data analysis, visualization, and machine learning.",
+            "category": "Data Science",
+            "date": "2023-07-10",
+            "tags": ["Python", "Data Science", "Machine Learning"],
+            "url": "https://example.com/python-data-science",
+            "mode": "sign in required"
+        }
+    ]
+};
+
+export default sampleData;
+ottom, Trash2, Edit2, PlusCircle,
   Download, Eye, Search, LayoutGrid, Save, BookOpen, X, Maximize, Minimize
 } from 'lucide-react';
 
